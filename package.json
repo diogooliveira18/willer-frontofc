@@ -1,0 +1,9 @@
+{
+  "name": "banco-frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npx live-server --port=5500 --open=index.html",
+    "dev": "npx live-server --port=5500 --open=index.html",
+    "tlgd": "npx live-server --port=5500 --open=index.html"
+  }
+}
