@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fluxo Bank</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue-deep:   #0a1628;
+      --blue-mid:    #0d2044;
+      --blue-card:   #0f2550;
+      --blue-bright: #1a6ef5;
+      --blue-light:  #4a9eff;
+      --blue-glow:   #1a6ef540;
+      --accent:      #4a9eff;
+      --white:       #ffffff;
+      --white-80:    rgba(255,255,255,0.8);
+      --white-40:    rgba(255,255,255,0.4);
+      --white-15:    rgba(255,255,255,0.15);
+      --white-08:    rgba(255,255,255,0.08);
+      --white-04:    rgba(255,255,255,0.04);
+      --danger:      #ff4d6d;
+      --success:     #00c896;
+      --radius:      16px;
+    }
+
+    body {
+      background: var(--blue-deep);
+      color: var(--white);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 20%, #1a4af530 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 80%, #0d2aaa25 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 60% 10%, #4a9eff18 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, #ffffff08 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+      animation: float 8s ease-in-out infinite;
+    }
+    .orb-1 {
+      width: 400px; height: 400px;
+      background: #1a6ef520;
+      top: -100px; left: -100px;
+      animation-delay: 0s;
+    }
+    .orb-2 {
+      width: 300px; height: 300px;
+      background: #4a9eff15;
+      bottom: -50px; right: -50px;
+      animation-delay: -4s;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-30px) scale(1.05); }
+    }
+
+   
+    .screen {
+      display: none;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 460px;
+      padding: 0 20px;
+      animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .screen.active { display: block; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+   
+    .card {
+      background: rgba(15, 37, 80, 0.6);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--white-15);
+      border-radius: 24px;
+      padding: 48px 44px;
+      box-shadow:
+        0 32px 80px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(255,255,255,0.05) inset,
+        0 1px 0 rgba(255,255,255,0.12) inset;
+    }
+
+   
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+
+    .logo-text .name {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #0d1f3c;
+      background: linear-gradient(135deg, #ffffff 0%, #a8c8ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo-text .sub {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--blue-light);
+    }
+
+   
+    .screen-title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+      color: var(--white);
+    }
+
+    .screen-sub {
+      font-size: 0.9rem;
+      color: var(--white-40);
+      margin-bottom: 32px;
+      font-weight: 400;
+    }
+
+    
+    .field {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--white-40);
+      margin-bottom: 8px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--white-40);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+    }
+
+    input {
+      width: 100%;
+      background: var(--white-08);
+      border: 1px solid var(--white-15);
+      border-radius: 12px;
+      color: var(--white);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      padding: 14px 16px 14px 46px;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    input::placeholder { color: var(--white-40); }
+
+    input:focus {
+      border-color: var(--blue-light);
+      background: rgba(74, 158, 255, 0.08);
+      box-shadow: 0 0 0 4px rgba(74, 158, 255, 0.15);
+    }
+
+   
+    .btn-primary {
+      width: 100%;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #1a6ef5 0%, #4a9eff 100%);
+      color: #fff;
+      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 8px 32px rgba(26, 110, 245, 0.4);
+      position: relative;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 60%);
+      border-radius: 12px;
+    }
+
+    .btn-primary:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 12px 40px rgba(26, 110, 245, 0.5); }
+    .btn-primary:active { transform: scale(0.98) translateY(0); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-ghost {
+      width: 100%;
+      padding: 14px 20px;
+      border: 1px solid var(--white-15);
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: transparent;
+      color: var(--white-80);
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+      margin-top: 8px;
+    }
+
+    .btn-ghost:hover { background: var(--white-08); border-color: var(--white-40); transform: translateY(-1px); }
+    .btn-ghost:active { transform: scale(0.98); }
+
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+      color: var(--white-40);
+      font-size: 0.78rem;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--white-15);
+    }
+
+    
+    .switch-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.88rem;
+      color: var(--white-40);
+    }
+
+    .switch-link button {
+      background: none;
+      border: none;
+      color: var(--blue-light);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .switch-link button:hover { color: var(--white); }
+
+    
+    .toast {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+      animation: slideUp 0.3s ease;
+    }
+
+    .toast.error {
+      background: rgba(255, 77, 109, 0.15);
+      border: 1px solid rgba(255, 77, 109, 0.3);
+      color: #ff8fa0;
+    }
+
+    .toast.success {
+      background: rgba(0, 200, 150, 0.15);
+      border: 1px solid rgba(0, 200, 150, 0.3);
+      color: #00e8b0;
+    }
+
+    .toast.show { display: flex; }
+
+   
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    
+    .success-icon-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+
+    .success-circle {
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00c896 0%, #00e8b0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 16px rgba(0, 200, 150, 0.12), 0 8px 32px rgba(0, 200, 150, 0.3);
+      animation: popIn 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .check-svg {
+      animation: drawCheck 0.4s ease 0.2s both;
+    }
+
+    @keyframes drawCheck {
+      from { stroke-dashoffset: 40; opacity: 0; }
+      to   { stroke-dashoffset: 0; opacity: 1; }
+    }
+
+    .success-title {
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--white);
+    }
+
+    .success-sub {
+      text-align: center;
+      font-size: 0.92rem;
+      color: var(--white-40);
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+
+    .user-welcome {
+      text-align: center;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--blue-light);
+      margin-bottom: 32px;
+    }
+
+   
+    .api-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.72rem;
+      font-family: 'DM Mono', monospace;
+      color: var(--white-40);
+      margin-bottom: 24px;
+    }
+
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--white-40);
+      flex-shrink: 0;
+      transition: background 0.3s;
+    }
+    .status-dot.online  { background: var(--success); box-shadow: 0 0 6px var(--success); }
+    .status-dot.offline { background: var(--danger);  box-shadow: 0 0 6px var(--danger); }
+  </style>
+</head>
+<body>
+
+  
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  
+  <div class="screen active" id="screen-login">
+    <div class="card">
+      <div class="logo-wrap">
+        
+        <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#4a9eff;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#1a6ef5;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          
+          <path d="M 22 10 Q 22 10 62 10 Q 78 10 78 24 Q 78 36 62 38 L 42 40 L 42 52 L 66 52 Q 74 52 74 60 Q 74 66 66 66 L 42 66 L 42 90 Q 42 95 36 95 Q 30 95 30 90 L 30 66 L 30 40 L 30 16 Q 30 10 22 10 Z" fill="none" stroke="url(#grad1)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          
+          <path d="M 38 22 L 65 22 Q 70 22 70 28 Q 70 33 65 34 L 38 36" fill="none" stroke="url(#grad1)" stroke-width="3.5" stroke-linecap="round" opacity="0.5"/>
+        </svg>
+        <div class="logo-text">
+          <span class="name">Fluxo</span>
+          <span class="sub">Bank</span>
+        </div>
+      </div>
+
+      <div class="api-status">
+        <div class="status-dot" id="dot-login"></div>
+        <span id="status-text-login">verificando conexão...</span>
+      </div>
+
+      <h2 class="screen-title">Bem-vindo de volta</h2>
+      <p class="screen-sub">Acesse sua conta para continuar</p>
+
+      <div class="toast" id="login-toast"></div>
+
+      <div class="field">
+        <label>E-mail</label>
+        <div class="input-wrap">
+          <span class="input-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          </span>
+          <input id="login-email" type="email" placeholder="seu@email.com" autocomplete="email" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Senha</label>
+        <div class="input-wrap">
+          <span class="input-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </span>
+          <input id="login-senha" type="password" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-login" onclick="doLogin()">Entrar na conta</button>
+
+      <div class="divider">ou</div>
+
+      <div class="switch-link">
+        Não tem conta? <button onclick="showScreen('register')">Criar conta gratuita</button>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="screen" id="screen-register">
+    <div class="card">
+      <div class="logo-wrap">
+        <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#4a9eff;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#1a6ef5;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <path d="M 22 10 Q 22 10 62 10 Q 78 10 78 24 Q 78 36 62 38 L 42 40 L 42 52 L 66 52 Q 74 52 74 60 Q 74 66 66 66 L 42 66 L 42 90 Q 42 95 36 95 Q 30 95 30 90 L 30 66 L 30 40 L 30 16 Q 30 10 22 10 Z" fill="none" stroke="url(#grad2)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 38 22 L 65 22 Q 70 22 70 28 Q 70 33 65 34 L 38 36" fill="none" stroke="url(#grad2)" stroke-width="3.5" stroke-linecap="round" opacity="0.5"/>
+        </svg>
+        <div class="logo-text">
+          <span class="name">Fluxo</span>
+          <span class="sub">Bank</span>
+        </div>
+      </div>
+
+      <h2 class="screen-title">Criar conta</h2>
+      <p class="screen-sub">Rápido, seguro e gratuito</p>
+
+      <div class="toast" id="register-toast"></div>
+
+      <div class="field">
+        <label>Nome completo</label>
+        <div class="input-wrap">
+          <span class="input-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+          </span>
+          <input id="reg-nome" type="text" placeholder="João Silva" autocomplete="name" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>E-mail</label>
+        <div class="input-wrap">
+          <span class="input-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          </span>
+          <input id="reg-email" type="email" placeholder="seu@email.com" autocomplete="email" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Senha</label>
+        <div class="input-wrap">
+          <span class="input-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </span>
+          <input id="reg-senha" type="password" placeholder="mínimo 4 caracteres" autocomplete="new-password" />
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-register" onclick="doRegister()">Criar minha conta</button>
+
+      <div class="divider">ou</div>
+
+      <div class="switch-link">
+        Já tem conta? <button onclick="showScreen('login')">Fazer login</button>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="screen" id="screen-success">
+    <div class="card">
+      <div class="success-icon-wrap">
+        <div class="success-circle">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <polyline
+              class="check-svg"
+              points="8,21 16,29 32,13"
+              stroke="white"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-dasharray="40"
+              stroke-dashoffset="40"
+              style="animation: drawCheck 0.4s ease 0.3s forwards;"
+            />
+          </svg>
+        </div>
+      </div>
+
+      <h2 class="success-title">Login efetuado com sucesso!</h2>
+      <p class="success-sub">Parabéns! Sua identidade foi verificada.<br>Bem-vindo ao Fluxo Bank.</p>
+      <p class="user-welcome" id="welcome-name"></p>
+
+      <button class="btn-primary" onclick="showScreen('login')">
+        Voltar à tela inicial
+      </button>
+
+      <button class="btn-ghost" style="margin-top: 12px" onclick="showScreen('login')">
+        Fazer logout
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const API = 'http://localhost:3001';
+    let currentUser = null;
+
+    
+    function showScreen(name) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById('screen-' + name);
+      target.classList.add('active');
+      
+      if (name === 'success') {
+        const poly = target.querySelector('.check-svg');
+        if (poly) {
+          poly.style.animation = 'none';
+          poly.getBoundingClientRect();
+          poly.style.animation = 'drawCheck 0.4s ease 0.3s forwards';
+        }
+      }
+    }
+
+    
+    function showToast(id, msg, type = 'error') {
+      const el = document.getElementById(id);
+      el.className = `toast ${type} show`;
+      el.innerHTML = (type === 'error'
+        ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+        : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'
+      ) + msg;
+    }
+
+    function hideToast(id) {
+      const el = document.getElementById(id);
+      el.className = 'toast';
+    }
+
+    
+    function setLoading(btnId, loading, label) {
+      const btn = document.getElementById(btnId);
+      if (loading) {
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner"></span>Aguarde...`;
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = label;
+      }
+    }
+
+    
+    async function doLogin() {
+      hideToast('login-toast');
+      const email = document.getElementById('login-email').value.trim();
+      const senha = document.getElementById('login-senha').value;
+
+      if (!email || !senha) {
+        showToast('login-toast', 'Preencha todos os campos.', 'error');
+        return;
+      }
+
+      setLoading('btn-login', true);
+
+      try {
+        const r = await fetch(`${API}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, senha }),
+        });
+        const data = await r.json();
+
+        if (r.ok) {
+          currentUser = data.usuario;
+          document.getElementById('welcome-name').textContent =
+            `Olá, ${currentUser.nome || currentUser.email}! 👋`;
+          showScreen('success');
+        } else {
+          showToast('login-toast', data.erro || 'Credenciais inválidas.', 'error');
+        }
+      } catch {
+        showToast('login-toast', 'Não foi possível conectar à API. Verifique se o servidor está rodando.', 'error');
+      } finally {
+        setLoading('btn-login', false, 'Entrar na conta');
+      }
+    }
+
+    
+    async function doRegister() {
+      hideToast('register-toast');
+      const nome  = document.getElementById('reg-nome').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const senha = document.getElementById('reg-senha').value;
+
+      if (!nome || !email || !senha) {
+        showToast('register-toast', 'Preencha todos os campos.', 'error');
+        return;
+      }
+
+      if (senha.length < 4) {
+        showToast('register-toast', 'A senha deve ter ao menos 4 caracteres.', 'error');
+        return;
+      }
+
+      setLoading('btn-register', true);
+
+      try {
+        const r = await fetch(`${API}/api/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome, email, senha }),
+        });
+        const data = await r.json();
+
+        if (r.ok) {
+          showToast('register-toast', 'Conta criada com sucesso! Faça login.', 'success');
+          setTimeout(() => {
+            document.getElementById('login-email').value = email;
+            showScreen('login');
+          }, 1400);
+        } else {
+          showToast('register-toast', data.erro || 'Erro ao criar conta.', 'error');
+        }
+      } catch {
+        showToast('register-toast', 'Não foi possível conectar à API. Verifique se o servidor está rodando.', 'error');
+      } finally {
+        setLoading('btn-register', false, 'Criar minha conta');
+      }
+    }
+
+    
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      const active = document.querySelector('.screen.active');
+      if (!active) return;
+      if (active.id === 'screen-login') doLogin();
+      if (active.id === 'screen-register') doRegister();
+    });
+
+    
+    async function checkStatus() {
+      const dot  = document.getElementById('dot-login');
+      const text = document.getElementById('status-text-login');
+      try {
+        const r = await fetch(`${API}/api`, { signal: AbortSignal.timeout(3000) });
+        if (r.ok) {
+          dot.className = 'status-dot online';
+          text.textContent = 'API conectada · localhost:3001';
+        } else throw new Error();
+      } catch {
+        dot.className = 'status-dot offline';
+        text.textContent = 'API offline · rode: npm run dev';
+      }
+    }
+
+    checkStatus();
+    setInterval(checkStatus, 6000);
+  </script>
+</body>
+</html>
